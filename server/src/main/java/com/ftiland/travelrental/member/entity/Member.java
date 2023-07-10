@@ -24,7 +24,7 @@ public class Member extends BaseEntity {
     private String displayName;
 
     // 이미지 필드 필요
-    private String addr;
+    private String address;
     private Double latitude;
     private Double longitude;
 
