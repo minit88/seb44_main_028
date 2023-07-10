@@ -6,7 +6,6 @@ import com.nimbusds.jose.shaded.json.JSONArray;
 import com.nimbusds.jose.shaded.json.JSONObject;
 import com.nimbusds.jose.shaded.json.JSONValue;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -14,7 +13,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.Optional;
 
 @Service
 public class MemberLocationService {
@@ -37,7 +35,7 @@ public class MemberLocationService {
 
         member.setLatitude(latitude);
         member.setLongitude(longitude);
-        member.setAddr(getLocation(member));
+        member.setAddress(getLocation(member));
 
         return memberRepository.save(member);
     }
@@ -47,14 +45,14 @@ public class MemberLocationService {
         String longitude = member.getLongitude().toString();
 
         String url = "https://dapi.kakao.com/v2/local/geo/coord2address.json?x="+longitude+"&y="+latitude;
-        String addr = "";
+        String address = "";
         try{
-            addr=getRegionAddress(getJSONData(url));
+            address=getRegionAddress(getJSONData(url));
         }catch (Exception e){
             e.printStackTrace();
         }
 
-        return addr;
+        return address;
     }
 
     // REST API로 통신하여 받은 JSON형태의 데이터를 String으로 받아오는 메소드
