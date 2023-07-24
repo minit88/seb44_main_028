@@ -1,0 +1,105 @@
+= SebMain_028_BE API 문서
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+
+
+== MemberController
+=== 주소 업데이트
+==== Request
+
+.http-request
+include::{snippets}/members/updateLocation/http-request.adoc[]
+include::{snippets}/members/updateLocation/request-parameters.adoc[]
+
+==== Response
+
+.http-response
+include::{snippets}/members/updateLocation/http-response.adoc[]
+
+== InterestController
+=== 찜하기 생성
+==== Request
+
+.http-request
+include::{snippets}/interest/postInterest/http-request.adoc[]
+include::{snippets}/interest/postInterest/request-parameters.adoc[]
+
+==== Response
+
+.http-response
+include::{snippets}/interest/postInterest/http-response.adoc[]
+
+=== 찜하기 해제
+==== Request
+
+.http-request
+include::{snippets}/interest/deleteInterest/http-request.adoc[]
+include::{snippets}/interest/deleteInterest/request-parameters.adoc[]
+
+==== Response
+
+.http-response
+include::{snippets}/interest/deleteInterest/http-response.adoc[]
+=== 찜목록 조회
+==== Request
+
+.http-request
+include::{snippets}/interest/GetInterest/http-request.adoc[]
+include::{snippets}/interest/GetInterest/request-parameters.adoc[]
+
+==== Response
+
+.http-response
+include::{snippets}/interest/GetInterest/http-response.adoc[]
+
+== ChatController
+=== 채팅방 생성
+==== Request
+
+.http-request
+include::{snippets}/chat/createChatroom/http-request.adoc[]
+include::{snippets}/chat/createChatroom/request-parameters.adoc[]
+
+==== Response
+
+.http-response
+include::{snippets}/chat/createChatroom/http-response.adoc
+
+=== 채팅방 조회
+==== Request
+
+.http-request
+include::{snippets}/chat/findChatroom/http-request.adoc[]
+include::{snippets}/chat/findChatroom/request-parameters.adoc[]
+
+==== Response
+
+.http-response
+include::{snippets}/chat/findChatroom/http-response.adoc[]
+
+=== 채팅방 메세지 조회
+==== Request
+
+.http-request
+include::{snippets}/chat/findChatroomMessage/http-request.adoc[]
+include::{snippets}/chat/findChatroomMessage/request-parameters.adoc[]
+
+==== Response
+
+.http-response
+include::{snippets}/chat/findChatroomMessage/http-response.adoc[]
+
+=== Seller 채팅 정보
+==== Request
+
+.http-request
+include::{snippets}/chat/getSeller/http-request.adoc[]
+include::{snippets}/chat/getSeller/request-parameters.adoc[]
+
+==== Response
+
+.http-response
+include::{snippets}/chat/getSeller/http-response.adoc[]
