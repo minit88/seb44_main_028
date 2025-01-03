@@ -1,9 +1,9 @@
-import { YearAndMonthWrapper, Month, Table, Year } from '../style';
 import Days from './Days';
 import Dates from './Dates';
+import { YearAndMonthWrapper, Month, Table, Year } from '../style';
 import { CalendarProps } from '../type';
 
-function Calendar({ calendar }: CalendarProps) {
+function Calendar({ calendar, reservationDataFromServer }: CalendarProps) {
   return (
     <Table>
       <YearAndMonthWrapper>
@@ -11,7 +11,10 @@ function Calendar({ calendar }: CalendarProps) {
         <Year>{calendar.year}</Year>
       </YearAndMonthWrapper>
       <Days />
-      <Dates calendar={calendar} />
+      <Dates
+        calendar={calendar}
+        reservationDataFromServer={reservationDataFromServer}
+      />
     </Table>
   );
 }

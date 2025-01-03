@@ -1,6 +1,7 @@
 package com.ftiland.travelrental.product.dto;
 
 import com.ftiland.travelrental.category.dto.CategoryDto;
+import com.ftiland.travelrental.category.dto.CategoryDtoForProductDetail;
 import com.ftiland.travelrental.product.entity.Product;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,17 +22,21 @@ public class ProductDetailDto {
     private Integer feePerDay;
     private Integer overdueFee;
     private Integer minimumRentalPeriod;
+    private Long ownerMemberId;
 
     private Double rate;
     private Integer viewCount;
 
-    private List<CategoryDto> categories;
-    private List<String> images;
+    private List<CategoryDtoForProductDetail> categories;
+    private List<String> productImages;
 
+    private String userImage;
     private String username;
     private String address;
 
-    public static ProductDetailDto from(Product product, List<CategoryDto> categories) {
+    public static ProductDetailDto from(Product product,
+                                        List<CategoryDtoForProductDetail> categories,
+                                        List<String> images) {
         return ProductDetailDto.builder()
                 .title(product.getTitle())
                 .content(product.getContent())
@@ -43,7 +48,9 @@ public class ProductDetailDto {
                 .viewCount(product.getViewCount())
                 .username(product.getMember().getDisplayName())
                 .address(product.getAddress())
-                .images(null)
+                .productImages(images)
+                .userImage(product.getMember().getImageUrl())
+                .ownerMemberId(product.getMember().getMemberId())
                 .categories(categories).build();
     }
 }

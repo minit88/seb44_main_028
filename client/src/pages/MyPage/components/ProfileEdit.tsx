@@ -1,4 +1,11 @@
-import React, { useRef, useState, useCallback } from 'react';
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  ChangeEvent,
+  FormEvent,
+} from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   UploadBtn,
   ProfileEditWrapper,
@@ -12,86 +19,127 @@ import {
   InputBox,
   StyledForm,
   MyPageEdit,
+  DelBtn,
 } from '../style';
-// import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import profileImage from '../../../../src/asset/my_page/profile-image.svg';
+import { colorPalette } from '../../../common/utils/enum/colorPalette';
+import { DefaultBtn } from '../../../common/components/Button';
+import { ACCESS_TOKEN } from '../../Login/constants';
+import useGetMe from '../../../common/utils/customHooks/useGetMe';
+import useDecryptToken from '../../../common/utils/customHooks/useDecryptToken';
+import useScrollToTop from '../../../common/utils/customHooks/useScrollToTop';
+import WithDrawalBtn from './WithdrawalBtn';
+import { useQueryClient } from 'react-query';
 
 function ProfileEdit() {
-  const inputRef = useRef<HTMLInputElement | null>(null);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  useScrollToTop();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const decrypt = useDecryptToken();
+  const [previewImage, setPreviewImage] = useState<string | null>(profileImage);
+  const [profileImg, setProfileImg] = useState<File | null>(null);
+  const [newDisplayName, setNewDisplayName] = useState<string>('');
 
-  const onUploadImage = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (!e.target.files) {
-        return;
-      }
-      const file = e.target.files[0];
-      const formData = new FormData();
-      formData.append('file', file);
-      // formData.append('file', e.target.files[0]);
+  console.log('Initial newDisplayName:', newDisplayName);
 
-      // 서버 연결 시
-      //     axios({
-      //       baseURL: API_HOST,
-      //       url: '/images/:username/thumbnail',
-      //       method: 'POST',
-      //       data: formData,
-      //       headers: {
-      //         'Content-Type': 'multipart/form-data',
-      //       },
-      //     })
-      //       .then((response) => {
-      //         console.log(response.data);
-      //       })
-      //       .catch((error) => {
-      //         console.error(error);
-      //       });
-      //   },
-      //   [],
-      // );
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result as string);
-      };
+  const { data: userData } = useGetMe();
+  console.log('userData', userData);
+
+  // const fetchUpdatedUserInfo = useCallback(async () => {
+  //   try {
+  //     queryClient.invalidateQueries('me');
+  //     const encryptedAccessToken: string | null =
+  //       localStorage.getItem(ACCESS_TOKEN) || '';
+  //     const accessToken = decrypt(encryptedAccessToken);
+
+  //     const response = await axios.get(
+  //       `${process.env.REACT_APP_API_URL}/api/members`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       },
+  //     );
+  //     const updatedUserInfo = response.data;
+  //     setNewDisplayName(updatedUserInfo.displayName);
+  //     setPreviewImage(updatedUserInfo.profileImageUrl); //이미지 업데이트
+  //     console.log('업데이트 유저정보:', updatedUserInfo.displayName);
+  //     console.log('업데이트 이미지정보:', updatedUserInfo.profileImageUrl);
+  //     console.log('업데이트 이미지정보:', updatedUserInfo);
+  //   } catch (error) {
+  //     console.error('업데이트된 유저정보를 가져오는데 실패했습니다.', error);
+  //   }
+  // }, [decrypt]);
+
+  const onUploadImage = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    const reader = new FileReader();
+    console.log('file', file);
+    reader.onloadend = () => {
+      setPreviewImage(reader.result as string);
+    };
+
+    if (file) {
       reader.readAsDataURL(file);
-    },
-    [],
-  );
-
-  const onInputButtonClick = useCallback(() => {
-    if (!inputRef.current) {
-      return;
+      setProfileImg(file);
+      console.log(setProfileImg);
     }
-    inputRef.current.click();
-  }, []);
+  };
 
-  const onSubmitForm = useCallback(
-    (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      const formData = new FormData(e.currentTarget);
-      console.log('Form data:', Object.fromEntries(formData));
-      console.log('Form submitted!');
-      // 서버로 전송하는 로직을 구현합니다.
-      // axios({
-      //   baseURL: API_HOST,
-      //   url: '/user/update',
-      //   method: 'POST',
-      //   data: {
-      //     profileImage: previewImage,
-      //     nickname: e.target.elements.nickname.value,
-      //     // 추가 정보들...
-      //   },
-      // })
-      //   .then((response) => {
-      //     console.log(response.data);
-      //   })
-      //   .catch((error) => {
-      //     console.error(error);
-      //   });
-    },
-    [],
-    // [previewImage],
-  );
+  const onDisplayNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewDisplayName(e.currentTarget.value);
+    console.log('수정 할 이름 :', e.currentTarget.value);
+  };
+
+  useEffect(() => {
+    console.log('수정 할 이름 :', newDisplayName);
+  }, [newDisplayName]);
+
+  const onInputButtonClick = () => {
+    const input = document.getElementById('imgUpload') as HTMLInputElement;
+    input.click();
+  };
+
+  const onSubmitForm = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    // Handle form submission logic here
+    const encryptedAccessToken: string | null =
+      localStorage.getItem(ACCESS_TOKEN) || '';
+    const accessToken = decrypt(encryptedAccessToken);
+
+    try {
+      const formData = new FormData();
+      formData.append('displayName', newDisplayName);
+      if (profileImg) {
+        formData.append('imageFile', profileImg);
+      }
+      const response = await axios.patch(
+        `${process.env.REACT_APP_API_URL}/api/members`,
+        formData,
+        // {
+        //   displayName: newDisplayName,
+        //   imageFile: profileImg,
+        // },
+
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        },
+      );
+      alert('정보가 수정되었습니다.');
+      console.log('회원 정보가 성공적으로 수정되었습니다.:', response.data);
+
+      // await fetchUpdatedUserInfo();
+      navigate('/mypage', { state: { newDisplayName } });
+    } catch (error) {
+      console.error('회원 정보 수정 중에 오류가 발생했습니다.', error);
+    }
+  };
+  console.log('이름수정', newDisplayName);
+
   return (
     <MyPageEdit>
       <ProfileEditWrapper>
@@ -100,12 +148,11 @@ function ProfileEdit() {
             {previewImage ? (
               <img src={previewImage} alt="Profile Image" />
             ) : (
-              <img src={profileImage} alt="Profile Image" />
+              <img src={profileImg?.name} alt="Profile Image" />
             )}
           </ProfileImg>
           <ProfilerEdit>
             <input
-              ref={inputRef}
               type="file"
               id="imgUpload"
               name="file"
@@ -113,32 +160,43 @@ function ProfileEdit() {
               onChange={onUploadImage}
             />
           </ProfilerEdit>
-
           <UploadBtn onClick={onInputButtonClick}>파일 선택</UploadBtn>
         </ProfileSection>
         <TextWrapper>
           <NameWrapper>
-            <ol>
-              <li>닉네임</li>
-              <li>내 동네</li>
-            </ol>
+            <div>닉네임</div>
+            <div>내 동네</div>
           </NameWrapper>
           <InputWrapper>
             <InputBox>
-              <input type="text" placeholder="닉네임" />
+              <input
+                type="text"
+                placeholder="닉네임"
+                value={newDisplayName}
+                onChange={onDisplayNameChange}
+              />
             </InputBox>
-            <TownBtn>내 동네 설정</TownBtn>
+            {/* <TownBtn>내 동네 설정</TownBtn> */}
           </InputWrapper>
         </TextWrapper>
       </ProfileEditWrapper>
-      <StyledForm onSubmit={onSubmitForm}>
-        <input
+      <StyledForm onSubmit={onSubmitForm} encType="multipart/form-data">
+        <DefaultBtn
+          color={colorPalette.grayTextColor}
+          backgroundColor={colorPalette.modalCancelButtonColor}
+          onClick={() => navigate('/mypage')}
+        >
+          돌아가기
+        </DefaultBtn>
+        <DefaultBtn
+          color={colorPalette.whiteColor}
+          backgroundColor={colorPalette.heavyColor}
           type="submit"
-          value="돌아가기"
-          style={{ backgroundColor: '#CDDBF0', color: '#333' }}
-        />
-        <input type="submit" value="정보 수정" />
+        >
+          수정
+        </DefaultBtn>
       </StyledForm>
+      <WithDrawalBtn />
     </MyPageEdit>
   );
 }

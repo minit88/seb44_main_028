@@ -14,61 +14,137 @@ import {
   PriceFavoriteWrapper,
 } from '../../style/style';
 import { ItemCardProps } from '../../type';
+import { useNavigate } from 'react-router-dom';
+import useDecryptToken from '../../utils/customHooks/useDecryptToken';
+import { ACCESS_TOKEN } from '../../constants';
+import { IInterest } from '../../model/IInterest';
+import useGetMe from '../../utils/customHooks/useGetMe';
+import { addressForMatter } from '../../../pages/MyPage/helper/addressForMatter';
 
 const ItemCard = ({ itemCardData }: { itemCardData: ItemCardProps }) => {
+  const navigate = useNavigate();
   const [isHeartClicked, setIsHeartClicked] = useState(false);
-  const [interestId, setInterestId] = useState('');
+  const [accessToken, setAccessToken] = useState<string | null>(null);
 
-  const fetchInterestId = async () => {
-    const response = await axios.get('https://playpack.shop/members/interests');
-    return response.data?.interestId;
-  };
-  const { data: interestIdData } = useQuery('interestId', fetchInterestId);
+  const { data: userData } = useGetMe();
 
   useEffect(() => {
-    if (interestIdData) {
-      setInterestId(interestIdData);
-      setIsHeartClicked(true);
-    } else {
-      setInterestId('');
-      setIsHeartClicked(false);
+    setIsHeartClicked(isHeartClicked);
+  }, [isHeartClicked]);
+
+  useEffect(() => {
+    const decrypt = useDecryptToken();
+    const encryptedAccessToken: string | null =
+      localStorage.getItem(ACCESS_TOKEN);
+    if (encryptedAccessToken) {
+      const decryptedToken = decrypt(encryptedAccessToken);
+      setAccessToken(decryptedToken);
     }
-  }, [interestIdData]);
+  }, []);
 
+  const { data: interestItems, refetch } = useQuery(
+    'interests',
+    () =>
+      axios.get(`${process.env.REACT_APP_API_URL}/api/members/interests/find`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }),
+    {
+      enabled: !!accessToken,
+    },
+  );
   const addInterestMutation = useMutation((productId: string) =>
-    axios.post('https://playpack.shop/interests', {
-      //memberId: '1', // 멤버 id는 임시로 1로 설정
-      productId: productId,
-    }),
+    axios
+      .post(
+        `${process.env.REACT_APP_API_URL}/api/members/interests`,
+        {
+          productId: productId,
+          memberId: String(userData?.memberId),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      )
+      .then((res) => {
+        setIsHeartClicked(true);
+        refetch();
+      }),
   );
 
-  const removeInterestMutation = useMutation((interestId: string) =>
-    axios.delete(`https://playpack.shop/interests?interestId=${interestId}`),
+  const removeInterestMutation = useMutation(
+    (interestId: string) =>
+      axios.delete(`${process.env.REACT_APP_API_URL}/api/members/interests`, {
+        data: {
+          memberId: String(userData?.memberId),
+          interestId: interestId,
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }),
+    {
+      onError: (error) => {
+        console.error('removeInterestMutation error:', error);
+      },
+      onSettled: () => {
+        setIsHeartClicked(false);
+        refetch();
+      },
+    },
   );
+  useEffect(() => {
+    if (interestItems && interestItems.data.responses) {
+      const interestList = interestItems.data.responses.find(
+        (interestItem: IInterest) =>
+          interestItem.productId === itemCardData.productId,
+      );
+      setIsHeartClicked(!!interestList);
+    }
+  }, [interestItems, itemCardData.productId]);
+  const handleHeartClick = async () => {
+    if (!userData) {
+      navigate('/login');
+      return;
+    }
+    if (!interestItems) {
+      return;
+    }
+    const interestList = interestItems.data.responses.find(
+      (interestItem: IInterest) =>
+        interestItem.productId === itemCardData.productId,
+    );
 
-  const handleHeartClick = () => {
-    if (isHeartClicked) {
-      removeInterestMutation.mutate(interestId);
+    if (interestList) {
+      removeInterestMutation.mutate(interestList.interestId);
     } else {
-      addInterestMutation.mutate(itemCardData.id);
+      addInterestMutation.mutate(itemCardData.productId);
     }
   };
 
+  const handleItemOnClick = () => {
+    navigate(`/detail/${itemCardData.productId}`);
+  };
   return (
     <ItemCardContainer>
-      <ItemImage src={itemCardData.imageUrl}></ItemImage>
+      <ItemImage
+        src={itemCardData.image}
+        onClick={handleItemOnClick}
+      ></ItemImage>
       <ItemInfo>
         <ItemName>{itemCardData.title}</ItemName>
         <ItemDescription>{itemCardData.content}</ItemDescription>
         <ItemLocationWrapper>
           <MdLocationOn />
-          <span>{itemCardData.location}</span>
+          <span>{addressForMatter(itemCardData.address)}</span>
         </ItemLocationWrapper>
       </ItemInfo>
       <PriceFavoriteWrapper isHeartClicked={isHeartClicked}>
         <ItemPrice>
           {`최소 대여기간 ${itemCardData.minimumRentalPeriod}일 고정금 ${itemCardData.baseFee}
-          만원 / ${itemCardData.feePerDay}일 ${itemCardData.overdueFee}만원`}
+          만원 / 1일 ${itemCardData.feePerDay}만원`}
         </ItemPrice>
         <BsFillHeartFill onClick={handleHeartClick} />
       </PriceFavoriteWrapper>

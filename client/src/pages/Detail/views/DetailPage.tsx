@@ -1,4 +1,12 @@
+import useScrollToTop from '../../../common/utils/customHooks/useScrollToTop';
+import ItemContent from '../components/ItemContent';
+
 function DetailPage() {
-  return <div>detail page</div>;
+  useScrollToTop();
+  return (
+    <>
+      <ItemContent />
+    </>
+  );
 }
 export default DetailPage;

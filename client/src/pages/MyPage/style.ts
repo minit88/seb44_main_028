@@ -13,12 +13,14 @@ export const ProfileWrapper = styled.div`
   box-shadow: ${BoxShadow.Basic};
   border-radius: 3px;
 `;
-export const EditWrapper = styled.div`
+export const EditWrapper = styled.button`
   display: flex;
   justify-content: flex-end;
-  padding-right: 5px;
   font-size: ${fontSize.small};
   color: ${colorPalette.grayTextColor};
+  border-style: none;
+  cursor: pointer;
+  transform: translateX(59rem);
 `;
 export const ProfileDataWrapper = styled.div`
   display: flex;
@@ -60,9 +62,15 @@ export const Location = styled.div`
   align-items: center;
   color: ${colorPalette.grayTextColor};
   font-size: ${fontSize.small};
-  span {
-    margin-right: 5px;
-    margin-top: -5px;
+`;
+export const LocationContent = styled.div`
+  display: flex;
+  align-items: center;
+  & svg {
+    margin-right: 0.5rem;
+  }
+  & div {
+    margin-right: 0.5rem;
   }
 `;
 export const EvaluationItem = styled.div`
@@ -89,7 +97,8 @@ export const PagingWrapper = styled.div`
   justify-content: center;
   align-items: center;
   position: relative;
-  margin-top: 5em;
+
+  margin-top: 10rem;
   ul {
     list-style: none;
     padding: 0;
@@ -165,11 +174,13 @@ export const CustomTapButton = styled.button`
 export const MyPageEdit = styled.div`
   display: grid;
 `;
-
 export const ProfileEditWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 200px;
+  transform: translateY(4rem);
+  box-shadow: ${BoxShadow.Basic};
 `;
 
 export const ProfileSection = styled.div`
@@ -182,6 +193,7 @@ export const UploadBtn = styled.button`
   width: 80px;
   height: 32px;
   background-color: ${colorPalette.whiteColor};
+  color: ${colorPalette.basicTextColor};
   border-radius: 3px;
   border: 1px solid ${colorPalette.grayTextColor};
 `;
@@ -191,32 +203,44 @@ export const ProfilerEdit = styled.div`
 export const TextWrapper = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
 `;
 export const NameWrapper = styled.div`
-  margin: 40px;
+  display: grid;
+  align-items: center;
+  margin: 0rem 1rem 0rem 3rem;
+
+  font-size: 14px;
+  font-weight: 600;
+  div {
+    align-items: center;
+    margin-top: 0.3rem;
+  }
 `;
 export const InputWrapper = styled.div`
-  padding: 20px;
+  display: grid;
+  align-items: center;
 `;
 export const InputBox = styled.div`
+  margin-bottom: 0.4rem;
   input {
-    width: 200px;
+    align-items: center;
+    width: 180px;
     height: 25px;
     padding-left: 10px;
   }
 `;
 export const TownBtn = styled(DefaultBtn)`
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  cursor: pointer;
   font-size: 10px;
   width: 80px;
   height: 22px;
 `;
 export const ProfileImg = styled.div`
+  margin-bottom: -0.2rem;
   img {
-    height: 100px;
-    width: 100px;
+    height: 90px;
+    width: 90px;
     border-radius: 50%;
     object-fit: cover;
   }
@@ -226,24 +250,31 @@ export const StyledForm = styled.form`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 15rem;
+  transform: translateY(8rem);
 
-  input {
-    background-color: #0d4c92;
-    color: #fff;
+  input,
+  button {
     height: 28px;
     width: 80px;
     margin: 5px;
     border-radius: 5px;
     border: none;
-    box-shadow: ${BoxShadow.Basic};
-    &:hover {
-      background-color: #1d5799;
-    }
+    cursor: pointer;
     &:active {
       transform: scale(0.98);
     }
   }
+`;
+export const DelBtn = styled.button`
+  display: flex;
+  flex-direction: row-reverse;
+  border: none;
+  background-color: transparent;
+  color: ${colorPalette.grayTextColor};
+
+  transform: translate(-0.8rem, 15rem);
+
+  cursor: pointer;
 `;
 
 //RatingStar
@@ -295,12 +326,70 @@ export const ButtonWapper2 = styled.div`
 export const Close = styled(DefaultBtn)`
   justify-content: space-around;
   border-radius: 5px;
-  color: ${colorPalette.basicTextColor};
-  background-color: ${colorPalette.modalCancelButtonColor};
   margin-right: 10px;
   cursor: pointer;
-  &:hover {
-    background-color: ${colorPalette.modalCancelButtonColor};
-  }
 `;
 export const Rating = styled(DefaultBtn)``;
+
+//WishList
+
+export const WishListWrapper = styled.div`
+  display: flex;
+`;
+export const WishCardWrapper = styled.div`
+  display: flex;
+  grid-template-columns: 1fr 1fr 1fr;
+`;
+export const LendListWrapper = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+`;
+export const LendListContainer = styled.div`
+  display: flex;
+`;
+//BorrowList
+
+export const BorrowWrapper = styled.div`
+  display: flex;
+
+  button {
+    border: 1px solid ${colorPalette.deepMintColor};
+    box-shadow: none;
+    border-radius: 20px;
+    margin-left: 1rem;
+    width: 10rem;
+    &:focus {
+      background-color: ${colorPalette.deepMintColor};
+      color: ${colorPalette.whiteColor};
+      opacity: 80%;
+    }
+    &:active {
+      background-color: ${colorPalette.deepMintColor};
+      color: ${colorPalette.whiteColor};
+    }
+  }
+`;
+export const BorrowCardWrappre = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+`;
+// LendList
+
+export const LendWrapper = styled.div`
+  button {
+    border: 1px solid ${colorPalette.deepMintColor};
+    box-shadow: none;
+    border-radius: 20px;
+    margin-left: 1rem;
+    width: 10rem;
+    &:focus {
+      background-color: ${colorPalette.deepMintColor};
+      color: ${colorPalette.whiteColor};
+      opacity: 80%;
+    }
+    &:active {
+      background-color: ${colorPalette.deepMintColor};
+      color: ${colorPalette.whiteColor};
+    }
+  }
+`;

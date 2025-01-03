@@ -17,19 +17,18 @@ export const TopButton = styled.button`
   font-weight: bold;
   font-size: 15px;
   padding: 15px 10px;
-  background-color: #12d3cf;
-  color: #fff;
+  background-color: ${colorPalette.accentColor};
+  color: ${colorPalette.whiteColor};
   border: none;
   border-radius: 50%;
   outline: none;
   cursor: pointer;
 
   &:hover {
-    background-color: #b0f4e6;
-    color: #12d3cf;
+    background-color: ${colorPalette.lightColor};
+    color: ${colorPalette.accentColor};
   }
 `;
-// Modal 컴포넌트의 스타일을 정의
 export const CategoryContainer = styled.div`
   display: grid;
   padding: 0 10rem;
@@ -49,7 +48,7 @@ export const CategoryButtonWrapper = styled.div`
     margin-bottom: 20px;
   }
 `;
-
+// Modal 컴포넌트의 스타일을 정의
 export const ModalWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -64,12 +63,16 @@ export const ModalWrapper = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: ${fontSize.basic};
-  box-shadow: 0 10px 24px hsla(0, 0%, 0%, 0.05),
-    0 20px 48px hsla(0, 0%, 0%, 0.05), 0 1px 4px hsla(0, 0%, 0%, 0.1);
+  z-index: 6;
+  box-shadow: ${BoxShadow.Basic};
   & svg {
     font-size: 4rem;
     color: ${colorPalette.modalIconColor};
     margin-bottom: 1rem;
+  }
+  & button {
+    margin-right: 0.438rem;
+    margin-top: 0.938rem;
   }
 `;
 
@@ -79,8 +82,10 @@ export const ModalOverlay = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: ${colorPalette.ModalBackgroundColor};
+  z-index: 5;
 `;
+
 export const ModalButtonWrapper = styled.div`
   display: flex;
   margin-top: 1rem;
@@ -100,11 +105,20 @@ export const ModalButtonWrapper = styled.div`
     color: ${colorPalette.whiteColor};
   }
 `;
+export const ModalInfoWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+export const ModalChildrenWrapper = styled.div`
+  display: flex;
+`;
 // ItemCardList 컴포넌트의 스타일을 정의
 export const ItemCardListWrapper = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 8.063rem;
+
   & p {
     font-size: 24px;
     margin-bottom: 1.25rem;
@@ -119,6 +133,7 @@ export const ItemCardWrapper = styled.div`
 export const ItemCardContainer = styled.div`
   display: flex;
   flex-direction: column;
+  margin-right: 2rem;
   width: 22.5rem;
   height: 22rem;
   border-bottom: 1px solid ${colorPalette.borderColor};
@@ -135,10 +150,13 @@ export const ItemImage = styled.img`
 export const ItemInfo = styled.div`
   max-width: 13.266rem;
 `;
-export const ItemName = styled.p`
+export const ItemName = styled.div`
   font-size: 20px;
   font-weight: 500;
   margin-bottom: 4.15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 export const ItemDescription = styled.div`
   overflow: hidden;
@@ -160,13 +178,14 @@ export const PriceFavoriteWrapper = styled.div<{ isHeartClicked: boolean }>`
   justify-content: space-between;
   font-size: 12px;
   color: ${colorPalette.heavyColor};
+  font-weight: bold;
   margin-bottom: 1.248rem;
   & svg {
     color: ${(prop) =>
       prop.isHeartClicked
-        ? `${colorPalette.heavyColor}`
+        ? `${colorPalette.itemCardHeartFillColor}`
         : `${colorPalette.itemCardHeartColor}`};
-    font-size: 18px;
+    font-size: 16px;
     transform: translateY(-5px);
     transition: color 0.2s ease-in-out;
   }
@@ -176,15 +195,15 @@ export const ItemPrice = styled.div`
 `;
 // Button
 export const DefaultBtn = styled.button`
-  background-color: #0d4c92;
-  color: #fff;
+  background-color: ${colorPalette.heavyColor};
+  color: ${colorPalette.whiteColor};
   height: 28px;
   width: 80px;
   border-radius: 5px;
   border: none;
   box-shadow: ${BoxShadow.Basic};
   &:hover {
-    background-color: #1d5799;
+    background-color: ${colorPalette.lightNavyColor};
   }
   &:active {
     transform: scale(0.98);
@@ -223,6 +242,7 @@ export const Selected = styled.div<{ isClick: boolean }>`
   padding: 0.713rem 0;
   padding-left: 1.75rem;
   padding-right: 0.888rem;
+
   & svg {
     font-size: 1.5rem;
     margin-left: -35px;
@@ -256,6 +276,7 @@ const fadeOut = keyframes`
     }
 `;
 export const OptionWrapper = styled.ul<{ isClick: boolean }>`
+  z-index: 10;
   width: 16.75rem;
   border: ${border.basic};
   position: absolute;
@@ -286,6 +307,8 @@ export const NoDataWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 20rem;
+  margin-bottom: 3.7rem;
 `;
 
 // checkbox 컴포넌트의 스타일을 정의
@@ -302,7 +325,7 @@ export const CheckBoxWrapper = styled.div<{ isSelected: boolean }>`
     isSelected && `${colorPalette.tagColor}`};
   color: ${({ isSelected }) => isSelected && `${colorPalette.whiteColor}`};
   border: ${({ isSelected }) =>
-    isSelected && `1px solid ${colorPalette.deepMintColor}`};
+    isSelected && `1px solid ${colorPalette.tagColor}`};
 `;
 
 // Loading 컴포넌트의 스타일을 정의
@@ -320,5 +343,151 @@ export const LoadingWrapper = styled.div`
     margin-top: 2.2rem;
     font-size: ${fontSize.NoDataText};
     color: ${colorPalette.lightGrayTextColor};
+  }
+`;
+// Error 컴포넌트의 스타일을 정의
+export const ErrorWrapper = styled.div`
+  margin-top: 9rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: ${fontSize.NoDataText};
+  color: ${colorPalette.grayTextColor};
+  & img {
+    width: 13.75rem;
+    height: 16.063rem;
+    margin-bottom: 3.188rem;
+  }
+  p:first-of-type {
+    font-weight: 700;
+  }
+`;
+
+//BorrowCard
+export const BorrowCardContainer = styled.div``;
+export const BorrowCardWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  box-shadow: ${BoxShadow.Basic};
+  transform: translateY(4rem);
+  height: 11rem;
+  width: 23rem;
+  margin-bottom: 2rem;
+`;
+export const ImgWrapper = styled.div`
+  margin-left: 1rem;
+  margin-right: 1rem;
+  height: 9rem;
+  width: 9rem;
+  img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 9rem;
+    width: 9rem;
+  }
+`;
+export const ContentWrapper = styled.div``;
+export const DatesWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 4rem;
+  width: 10rem;
+
+  font-size: ${fontSize.small};
+  color: ${colorPalette.grayTextColor};
+  div {
+    transform: translateY(1rem);
+  }
+`;
+
+export const TitleWrapper = styled.div`
+  display: flex;
+  height: 2rem;
+  width: 10rem;
+  font-weight: 700;
+  font-size: ${fontSize.basic};
+`;
+
+export const ButtonWapper = styled.div`
+  display: flex;
+  align-items: center;
+  /* border: 1px solid brown; */
+  height: 2rem;
+  width: 10rem;
+
+  button {
+    width: 4.5rem;
+    height: 1.7rem;
+    font-weight: lighter;
+    font-size: ${fontSize.small};
+  }
+`;
+//LendCard
+export const LendCardWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  box-shadow: ${BoxShadow.Basic};
+  transform: translateY(4rem);
+  height: 11rem;
+  width: 23rem;
+  margin-bottom: 2rem;
+  cursor: pointer;
+`;
+
+export const LendImgWrapper = styled.div`
+  margin-left: 1rem;
+  height: 9rem;
+  width: 9rem;
+  img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 9rem;
+    width: 9rem;
+  }
+`;
+export const LendContentWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-left: 1rem;
+`;
+export const LendDatesWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  /* border: 1px solid gray; */
+  height: 4rem;
+  width: 10rem;
+  font-size: ${fontSize.small};
+  color: ${colorPalette.grayTextColor};
+`;
+export const LendPeriod = styled.p`
+  margin-bottom: 0.5rem;
+`;
+export const LendTitleWrapper = styled.div`
+  display: flex;
+  /* border: 1px solid black; */
+  height: 2rem;
+  width: 10rem;
+  font-weight: 700;
+  font-size: ${fontSize.basic};
+`;
+
+export const LendButtonWapper = styled.div`
+  display: flex;
+  align-items: center;
+  /* border: 1px solid brown; */
+  height: 2rem;
+  width: 10rem;
+
+  button {
+    margin-right: 0.3rem;
+    width: 4.5rem;
+    height: 1.7rem;
+    font-weight: lighter;
+    font-size: ${fontSize.small};
   }
 `;

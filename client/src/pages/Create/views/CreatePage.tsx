@@ -1,6 +1,12 @@
-import CheckBoxList from '../../../common/components/Checkbox/CheckBoxList';
-
+import useScrollToTop from '../../../common/utils/customHooks/useScrollToTop';
+import WritePost from '../components/WritePost';
+import { CreatePageContainer } from '../style';
 function CreatePage() {
-  return <CheckBoxList />;
+  useScrollToTop();
+  return (
+    <CreatePageContainer>
+      <WritePost productData="" />
+    </CreatePageContainer>
+  );
 }
 export default CreatePage;
